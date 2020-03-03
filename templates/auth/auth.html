@@ -1,0 +1,54 @@
+{% extends 'auth/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="d-flex">
+    <div class="mx-auto">
+        <h1 class="text-center">Авторизация</h1>
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        <form method="post" novalidate class="mt-4" id="form_auth">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="d-flex">
+                <button type="submit" class="btn btn-success mx-auto">Войти</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $('.captcha-refresh').click(function () {
+        var $form = $(this).parents('form');
+        var url = location.protocol + "//" + window.location.hostname + ":"
+            + location.port + "/captcha/refresh/";
+        // Make the AJAX-call
+        $.getJSON(url, {}, function (json) {
+            $form.find('input[name="captcha_0"]').val(json.key);
+            $form.find('img.captcha').attr('src', json.image_url);
+        });
+        return false;
+    });
+
+    {% comment %}$('#form_auth').submit(function (e) {
+        e.preventDefault();
+
+        if($(this).children('input[name="email"]').val() == ""){
+
+        }
+        if($(this).children('input[name="password"]').val() == ""){
+
+        }
+
+    }){% endcomment %}
+});
+</script>
+
+
+{% endblock %}

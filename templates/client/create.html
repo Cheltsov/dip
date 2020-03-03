@@ -1,0 +1,69 @@
+{% extends 'adminer/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <style>
+        .custom-file-input:lang(en)~.custom-file-label::after {
+            content: "Открыть";
+        }
+    </style>
+    <div class="container">
+        <div class="row" style="display:flex; justify-content: center; align-items: center">
+            <div class="col-sm6" style="width: 100%;">
+                <form method="post" action="{% url "client:add_client" %}" enctype="multipart/form-data" class="mt-4">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ form_client.fio.id_for_label }}">{{ form_client.fio.label }}*</label>
+                        <input type="text" class="form-control" id="{{ form_client.fio.id_for_label }}"
+                               aria-describedby="emailHelp" placeholder=""
+                               name="{{ form_client.fio.html_name }}" value="" required>
+                        {% comment %}<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>{% endcomment %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form_client.photo.id_for_label }}">{{ form_client.photo.label }}*</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="{{ form_client.photo.id_for_label }}" name="{{ form_client.photo.html_name }}" value="{{ form_client.photo.value }}">
+                            <label class="custom-file-label selected" for="{{ form_client.photo.id_for_label }}">Выберите файл</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form_client.email.id_for_label }}">{{ form_client.email.label }}*</label>
+                        <input type="text" class="form-control" id="{{ form_client.email.id_for_label }}"
+                               aria-describedby="emailHelp" placeholder=""
+                               name="{{ form_client.email.html_name }}" value="" required>
+                        {% comment %}<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>{% endcomment %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form_client.password.id_for_label }}">{{ form_client.password.label }}*</label>
+                        <input type="text" class="form-control" id="{{ form_client.password.id_for_label }}"
+                               aria-describedby="emailHelp" placeholder=""
+                               name="{{ form_client.password.html_name }}" value="" required>
+                        {% comment %}<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>{% endcomment %}
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="{{ form_client.active.id_for_label }}" name="{{ form_client.active.html_name }}">
+                          <label class="custom-control-label" for="{{ form_client.active.id_for_label }}">{{ form_client.active.label }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="{{ form_client.status.id_for_label }}" name="{{ form_client.status.html_name }}">
+                          <label class="custom-control-label" for="{{ form_client.status.id_for_label }}">{{ form_client.status.label }}</label>
+                        </div>
+                    </div>
+                    <a href="javascript:history.back()" type="submit" class="btn btn-secondary">Отмена</a>
+                    <button type="submit" class="btn btn-success">Создать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+{% endblock %}

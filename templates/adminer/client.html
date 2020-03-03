@@ -1,0 +1,121 @@
+{% extends 'adminer/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div class="container-fluid ">
+
+        <div class="form-inline mt-4 mb-4" style="justify-content: space-between;">
+            <div>
+                <input class="form-control mr-sm-2" type="search" placeholder="ФИО" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search_cl">Найти</button>
+            </div>
+            <a href="{% url 'adminer:client_add' %}" style="float: right">
+                <button type="button" class="btn btn-success">Создать клиента</button>
+            </a>
+        </div>
+
+        <table class="table table-striped table-dark table-hover ">
+            <thead>
+            <tr>
+                <th scope="col"></th>
+                {% comment %}<th scope="col">#</th>{% endcomment %}
+                <th scope="col">№</th>
+                <th scope="col">ФИО</th>
+                <th scope="col">Email</th>
+                <th scope="col">Активность</th>
+                <th scope="col">Сложная авторизация</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for cl in clients %}
+                <tr>
+                    <td scope="row"></td>
+                    <td>{{ cl.id }}</td>
+                    <td>{{ cl.fio }}</td>
+                    <td>{{ cl.email }}</td>
+                    <td>
+                        {% if cl.active %}
+                            Да
+                        {% else %}
+                            Нет
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cl.status %}
+                            Да
+                        {% else %}
+                            Нет
+                        {% endif %}</td>
+                    <td>
+                        <a href="{% url "adminer:client_edit" cl.id %}">
+                            <button type="button" class="btn btn-info">Редактировать</button>
+                        </a>
+                        <a href="{% url "adminer:client_del" cl.id %}">
+                            <button type="button" class="btn btn-danger">Удалить</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            table = $('table').html();
+
+            $('.nav-item').removeClass('active');
+            $('.nav-item').each(function () {
+                if ($(this).attr('data-name') === "cl") $(this).addClass('active')
+            });
+
+            $('#search_cl').click(function () {
+                fio = $(this).siblings('input').val();
+                if(fio !== ""){
+                    $.ajax({
+                        url: "{% url "client:search" %}",
+                        type: 'POST',
+                        headers: { "X-CSRFToken": '{{csrf_token}}' },
+                        data: {
+                            'fio': fio,
+                        },
+                        success:function(response){
+                            console.log(response);
+                            if(response !== "false"){
+                                var arr_doc = response;
+                                $('tbody').empty();
+                                arr_doc.forEach(function(item){
+                                    console.log(item);
+                                    $('tbody').append(`
+                                    <tr>
+                                        <td scope="row"></td>
+                                        <td>`+ item.id +`</td>
+                                        <td>`+ item.fio +`</td>
+                                        <td>`+ item.email +`</td>
+                                        <td>`+ item.active +`</td>
+                                        <td>`+ item.status +`<td>
+                                            <a href="/admin/client_edit/`+ item.id +`">
+                                                <button type="button" class="btn btn-info">Редактировать</button>
+                                            </a>
+                                            <a href="/admin/client_del/`+ item.id +`">
+                                                <button type="button" class="btn btn-danger">Удалить</button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    `)
+                                });
+                            }
+                        }
+                    });
+                }
+                else{
+                    $('table').html(table)
+                }
+            })
+        });
+    </script>
+
+{% endblock %}

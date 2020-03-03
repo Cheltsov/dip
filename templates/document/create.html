@@ -1,0 +1,78 @@
+{% extends base %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <style>
+        .custom-file-input:lang(en)~.custom-file-label::after {
+            content: "Открыть";
+        }
+    </style>
+    <div class="container">
+        <div class="row" style="display:flex; justify-content: center; align-items: center">
+            <div class="col-sm6" style="width: 100%;">
+                <form method="post" action="{% url "document:create_doc" %}" enctype="multipart/form-data" class="mt-4">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ form_client.title.id_for_label }}">{{ form_client.title.label }}*</label>
+                        <input type="text" class="form-control" id="{{ form_client.title.id_for_label }}"
+                               aria-describedby="emailHelp" placeholder=""
+                               name="{{ form_client.title.html_name }}" value="" required>
+                        {% comment %}<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>{% endcomment %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form_client.file.id_for_label }}">{{ form_client.file.label }}*</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="{{ form_client.file.id_for_label }}" name="{{ form_client.file.html_name }}" value="{{ form_client.file.value }}">
+                            <label class="custom-file-label selected" for="{{ form_client.file.id_for_label }}">Выберите файл</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form_client.crypth.id_for_label }}">{{ form_client.crypth.label }}*</label>
+                        <select class="custom-select" name="{{ form_client.crypth.html_name }}">
+                            {% for x, y in form_client.crypth.field.choices %}
+                                <option value="{{ x }}"{% if form_client.crypth.value == x %}
+                                        selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if admin %}
+                        <div class="form-group" data-type="{{ form_client.client.widget }}">
+                            <label for="{{ form_client.client.id_for_label }}">{{ form_client.client.label }}*</label>
+                            <select class="custom-select" name="{{ form_client.client.html_name }}">
+                                {% for x, y in form_client.client.field.choices %}
+                                    <option value="{{ x }}"{% if form_client.client.value == x %}
+                                            selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% else %}
+                        <input type="hidden" name="{{ form_client.client.html_name }}" value="{{ form_client.client.value }}">
+                    {% endif %}
+
+                    <a href="javascript:history.back()" type="submit" class="btn btn-secondary">Отмена</a>
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('select[name="client"]').children('option').each(function(){
+                if($(this).text() === "---------"){
+                    $(this).next().attr('selected', 'selected');
+                    $(this).remove();
+                }
+            });
+        });
+    </script>
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+{% endblock %}

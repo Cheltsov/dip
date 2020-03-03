@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://raw.githubusercontent.com/phstc/jquery-dateFormat/master/dist/jquery-dateformat.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'adminer:home' %}">CMSS</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" data-name="main">
+                <a class="nav-link" href="{% url 'adminer:home' %}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" data-name="doc">
+                <a class="nav-link" href="{% url 'adminer:document' %}">Документы <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" data-name="cl">
+                <a class="nav-link" href="{% url 'adminer:client' %}">Клиенты <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" data-name="log">
+                <a class="nav-link" href="{% url 'adminer:log' %}">Логи <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" data-name="set">
+                <a class="nav-link" href="{% url 'adminer:settings' %}">Настройки <span class="sr-only">(current)</span></a>
+            </li>
+            {% comment %}<li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Dropdown
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#">Disabled</a>
+            </li>{% endcomment %}
+        </ul>
+        <div class="nav-item">
+            <a class="nav-link disabled" href="#">Администратор</a>
+        </div>
+        <a href="{% url "adminer:exit" %}" style="margin-left:10px"><button type="button" class="btn btn-secondary">Выход</button></a>
+    </div>
+</nav>
+{% block content %}
+{% endblock %}
+</body>
+</html>

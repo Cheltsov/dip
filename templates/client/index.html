@@ -1,0 +1,10 @@
+{% extends 'client/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div>Добро пожаловать, {{ client.fio }}</div>
+    <p class="mt-4">Последнее действие в системе было произведено {{ last_time.date_created|date:'d.m.Y H:i' }}</p>
+
+{% endblock %}

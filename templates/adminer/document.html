@@ -1,0 +1,149 @@
+{% extends 'adminer/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div class="container-fluid ">
+
+        <div class="form-inline mt-4 mb-4" style="justify-content: space-between;">
+            <div>
+                <input class="form-control mr-sm-2" type="search" placeholder="Название" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search_doc">Найти</button>
+            </div>
+            <a href="{% url 'adminer:document_add' %}" style="float: right"><button type="button" class="btn btn-success">Создать документ</button></a>
+        </div>
+
+        <table class="table table-striped table-dark table-hover ">
+            <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">№</th>
+                <th scope="col">Название</th>
+                {% comment %}<th scope="col">Ссылка</th>{% endcomment %}
+                <th scope="col">Создатель</th>
+                <th scope="col">Метод шифрования</th>
+                <th scope="col">Дата создания</th>
+                <th scope="col">Дата изменения</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for doc in documents %}
+                <tr>
+                    {% comment %}<th scope="row">{{ forloop.counter }}</th>{% endcomment %}
+                    <th scope="row"></th>
+                    <th scope="row">{{ doc.id }}</th>
+                    <td>{{ doc.title }}</td>
+                    {% comment %}<td class="td_dec">
+                        {% if doc.decrypth %}
+                           Уже запрошен
+                        {% else %}
+                            <a type="button" class="btn btn-light get_dec text-dark" data-del="{{ doc.id }}">Запросить</a>
+                        {% endif %}
+                    </td>{% endcomment %}
+                    <td>{{ doc.client.fio }}</td>
+                    <td>{{ doc.get_crypth_display }}</td>
+                    <td>{{ doc.date_created|date:'d.m.Y H:i' }}</td>
+                    <td>{{ doc.date_updated|date:'d.m.Y H:i' }}</td>
+                    <td>
+                        <a href="{% url "adminer:document_edit" doc.id %}">
+                            <button type="button" class="btn btn-info">Редактировать</button>
+                        </a>
+                        <a href="{% url "adminer:document_del" doc.id %}">
+                            <button type="button" class="btn btn-danger">Удалить</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+
+            table = $('table').html();
+
+            $(".get_dec").click(function (e) {
+                e.preventDefault();
+                var id_doc = $(this).attr('data-del');
+                $.ajax({
+                    url: "{% url "document:get_decrypth" %}",
+                    type: 'POST',
+                    headers: { "X-CSRFToken": '{{csrf_token}}' },
+                    data: {
+                        'id': id_doc,
+                    },
+                    success:function(response){
+                        if(response === "true"){
+                            $('.td_dec').html('Уже запрошен');
+                            alert('Файл будет выслан вам на почту в ближайшее время!');
+                        }
+                    }
+                });
+            });
+
+            $('#search_doc').click(function () {
+                title = $(this).siblings('input').val();
+                if(title !== ""){
+                    $.ajax({
+                        url: "{% url "document:search_admin" %}",
+                        type: 'POST',
+                        headers: { "X-CSRFToken": '{{csrf_token}}' },
+                        data: {
+                            'title': title,
+                        },
+                        success:function(response){
+                            console.log(response);
+                            if(response !== "false"){
+                                var arr_doc = response;
+                                $('tbody').empty();
+                                arr_doc.forEach(function(item){
+                                    if(item.decrypth === true){
+                                        but = "Уже запрошен";
+                                    }
+                                    else{
+                                        but = `<a type="button" class="btn btn-light get_dec text-dark" data-del="` + item.id + `">Запросить</a>`
+                                    }
+                                    $('tbody').append(`
+                                    <tr>
+                                        <th scope="row"></th>
+                                        <th scope="row">` + item.id + `</th>
+                                        <td>` + item.title + `</td>
+                                        <td class="td_dec">` + but + `</td>
+                                        <td>` + item.client + `</td>
+                                        <td>` + item.display_crypth + `</td>
+                                        <td>` + item.date_created + `</td>
+                                        <td>` + item.date_created + `</td>
+                                        <td>
+                                            <a href="/admin/document/edit/` + item.id + `">
+                                                <button type="button" class="btn btn-info">Редактировать</button>
+                                            </a>
+                                            <a href="/admin/document/del/` + item.id + `">
+                                                <button type="button" class="btn btn-danger">Удалить</button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    `)
+                                });
+                            }
+                        }
+                    });
+                }
+                else{
+                    $('table').html(table)
+                }
+            })
+        });
+    </script>
+    <script>
+    $(document).ready(function () {
+        $('.nav-item').removeClass('active');
+        $('.nav-item').each(function () {
+            if ($(this).attr('data-name') === "doc") $(this).addClass('active')
+        });
+    });
+</script>
+
+{% endblock %}

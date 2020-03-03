@@ -1,0 +1,17 @@
+{% extends 'adminer/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div>Добро пожаловать, Adminer</div>
+
+    <script>
+        $(document).ready(function () {
+            $('.nav-item').removeClass('active');
+            $('.nav-item').each(function () {
+                if ($(this).attr('data-name') === "main") $(this).addClass('active')
+            });
+        });
+    </script>
+{% endblock %}

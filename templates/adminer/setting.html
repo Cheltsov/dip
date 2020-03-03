@@ -1,0 +1,51 @@
+{% extends 'adminer/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <style>
+        .custom-file-input:lang(en)~.custom-file-label::after {
+            content: "Открыть";
+        }
+    </style>
+    <div class="container">
+        <div class="row" style="display:flex; justify-content: center; align-items: center">
+            <div class="col-sm6" style="width: 100%;">
+                <form method="post" action="{% url "adminer:settings" %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}*</label>
+                        <input type="text" class="form-control" id="{{ form.email.id_for_label }}"
+                               aria-describedby="emailHelp" placeholder=""
+                               name="{{ form.email.html_name }}" value="{{ form.email.value }}" required>
+                        {% comment %}<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>{% endcomment %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.password.id_for_label }}">{{ form.password.label }}*</label>
+                        <input type="text" class="form-control" id="{{ form.password.id_for_label }}"
+                               aria-describedby="emailHelp" placeholder=""
+                               name="{{ form.password.html_name }}" value="{{ form.password.value }}" required>
+                        {% comment %}<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>{% endcomment %}
+                    </div>
+                    <a href="javascript:history.back()" type="submit" class="btn btn-secondary">Отмена</a>
+                    <button type="submit" class="btn btn-success">Изменить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('.nav-item').removeClass('active');
+            $('.nav-item').each(function () {
+                if ($(this).attr('data-name') === "set") $(this).addClass('active')
+            });
+        });
+    </script>
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+{% endblock %}
